@@ -201,6 +201,7 @@ export default class Register extends Component {
               <Item regular style={styles.input}>
                 <Input
                   placeholder="Email"
+                  keyboardType="email-address"
                   placeholderTextColor="#B5B5B5"
                   value={this.state.email}
                   onChangeText={email => this.setState({email})}

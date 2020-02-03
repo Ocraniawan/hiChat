@@ -48,6 +48,7 @@ export default class Profile extends Component {
       // data.val() is the dictionary with all your keys/values from the '/store' path
       const item = data.val();
       this.setState({
+        userId: item.id,
         name: item.fullname,
         email: item.email,
         photo: item.photo,

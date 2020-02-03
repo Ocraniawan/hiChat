@@ -24,6 +24,7 @@ import AddFriends from './src/component/Chat/addFriends';
 import Contact from './src/component/contact';
 import Search from './src/component/Search';
 import UserProfile from './src/component/Profile/friendsProfile';
+console.disableYellowBox = true;
 
 const HomeNav = createStackNavigator(
   {
