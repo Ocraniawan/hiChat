@@ -1,17 +1,16 @@
 import React, {Component} from 'react';
-import {Text, View, StyleSheet, FlatList} from 'react-native';
 import {
-  Content,
-  List,
-  ListItem,
-  Thumbnail,
-  Left,
-  Body,
-  Right,
-  Item,
-  Input,
-} from 'native-base';
+  Text,
+  View,
+  StyleSheet,
+  FlatList,
+  TouchableOpacity,
+  Image,
+} from 'react-native';
+import {Content, List, ListItem, Left, Body, Right, Item} from 'native-base';
 import Icon from 'react-native-vector-icons/FontAwesome';
+import AsyncStorage from '@react-native-community/async-storage';
+import firebase from 'react-native-firebase';
 
 const contact = [
   {
@@ -76,8 +75,37 @@ const contact = [
   },
 ];
 
-export default class Home extends Component {
-  render() {
+class Home extends Component {
+  constructor(props) {
+    super(props);
+  }
+  static navigationOptions = {
+    headerShown: false,
+  };
+  state = {
+    userList: [],
+    refreshing: false,
+    uid: '',
+  };
+
+  componentDidMount = async () => {
+    const uid = await AsyncStorage.getItem('userid');
+    this.setState({uid: uid, refreshing: true});
+    await firebase
+      .database()
+      .ref('/users')
+      .on('child_added', data => {
+        let person = data.val();
+        if (person.id !== uid) {
+          this.setState(prevData => {
+            return {userList: [...prevData.userList, person]};
+          });
+          this.setState({refreshing: false});
+        }
+      });
+  };
+
+  render(props) {
     return (
       <>
         <View style={styles.root}>
@@ -94,27 +122,38 @@ export default class Home extends Component {
           </View>
           <View style={styles.body}>
             <FlatList
-              data={contact}
+              data={this.state.userList}
               renderItem={({item}) => (
                 <View style={styles.listChat}>
                   <Content>
                     <List>
                       <ListItem avatar>
                         <Left>
-                          <Thumbnail
-                            source={{
-                              uri:
-                                'https://cdn2.vectorstock.com/i/thumb-large/20/76/man-avatar-profile-vector-21372076.jpg',
-                            }}
-                            style={styles.profilePic}
-                          />
+                          <TouchableOpacity
+                            onPress={() =>
+                              this.props.navigation.navigate('UserProfile', {
+                                item,
+                              })
+                            }>
+                            <Image
+                              source={{uri: item.photo}}
+                              style={styles.profilePic}
+                            />
+                          </TouchableOpacity>
                         </Left>
                         <Body>
-                          <Text style={styles.personName}>{item.name}</Text>
-                          <Text note>{item.chat}</Text>
+                          <TouchableOpacity
+                            onPress={() =>
+                              this.props.navigation.navigate('Chat', {item})
+                            }>
+                            <Text style={styles.personName}>
+                              {item.fullname}
+                            </Text>
+                            <Text note>{item.email}</Text>
+                          </TouchableOpacity>
                         </Body>
                         <Right>
-                          <Text note>{item.time}</Text>
+                          <Text note>{item.date}</Text>
                         </Right>
                       </ListItem>
                     </List>
@@ -160,6 +199,7 @@ const styles = StyleSheet.create({
   profilePic: {
     height: 50,
     width: 50,
+    borderRadius: 25,
     justifyContent: 'center',
     alignItems: 'center',
     marginRight: -5,
@@ -178,3 +218,5 @@ const styles = StyleSheet.create({
     color: '#1f1f1f',
   },
 });
+
+export default Home;

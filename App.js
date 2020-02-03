@@ -7,13 +7,23 @@ import {createBottomTabNavigator} from 'react-navigation-tabs';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import Icons from 'react-native-vector-icons/Entypo';
 
-import SplashScreen from './src/main/SplashScreen';
+import SplashScreen from './src/screen/SplashScreen';
 import LandingPage from './src/landing/LandingPage';
 import Register from './src/landing/Register';
 import Login from './src/landing/Login';
-import Locations from './src/main/Location';
-import Profile from './src/main/Profile';
-import Mainscreen from './src/main/Home';
+import Locations from './src/screen/Location';
+import Profile from './src/screen/Profile';
+import Mainscreen from './src/screen/Home';
+import Chat from './src/component/Chat/Chat';
+import Loading from './src/component/Loading/loading';
+import FriendsLocation from './src/component/maps/friendsLocation';
+import EditPhoto from './src/component/Profile/editPhoto';
+import EditProfile from './src/component/Profile/editProfile';
+import FriendsProfile from './src/component/Profile/friendsProfile';
+import AddFriends from './src/component/Chat/addFriends';
+import Contact from './src/component/contact';
+import Search from './src/component/Search';
+import UserProfile from './src/component/Profile/friendsProfile';
 
 const HomeNav = createStackNavigator(
   {
@@ -21,6 +31,27 @@ const HomeNav = createStackNavigator(
       screen: Mainscreen,
       navigationOptions: {
         headerShown: false,
+      },
+    },
+    Chat: {
+      screen: Chat,
+      navigationOptions: {
+        headerShown: false,
+        tabBarVisible: false,
+      },
+    },
+    UserProfile: {
+      screen: UserProfile,
+      navigationOptions: {
+        headerShown: false,
+        tabBarVisible: false,
+      },
+    },
+    friendsLocation: {
+      screen: FriendsLocation,
+      navigationOptions: {
+        headerShown: false,
+        tabBarVisible: false,
       },
     },
   },
@@ -70,11 +101,28 @@ const ProfileNav = createStackNavigator(
         headerShown: false,
       },
     },
+    editPhoto: {
+      screen: EditPhoto,
+      navigationOptions: {
+        headerShown: false,
+      },
+    },
   },
   {
     initialRouteName: 'Profile',
   },
 );
+
+ProfileNav.navigationOptions = ({navigation}) => {
+  let tabBarVisible = true;
+  if (navigation.state.index > 0) {
+    tabBarVisible = false;
+  }
+
+  return {
+    tabBarVisible,
+  };
+};
 
 const BottomNav = createBottomTabNavigator(
   {
@@ -100,13 +148,13 @@ const BottomNav = createBottomTabNavigator(
       screen: ProfileNav,
       navigationOptions: {
         tabBarIcon: ({tintColor}) => {
-          return <Icon name="face" size={30} color={tintColor} />;
+          return <Icon name="account-circle" size={30} color={tintColor} />;
         },
       },
     },
   },
   {
-    initialRouteName: 'Profile',
+    initialRouteName: 'Home',
     tabBarOptions: {
       activeTintColor: '#FBF5E5',
       inactiveTintColor: '#C7CACD',
@@ -146,7 +194,7 @@ const LandingNav = createSwitchNavigator(
     },
   },
   {
-    initialRouteName: 'Login',
+    initialRouteName: 'LandingPage',
   },
 );
 
@@ -158,7 +206,7 @@ const SwitchNav = createSwitchNavigator(
   },
   {
     headerShown: false,
-    initialRouteName: 'LandingNav',
+    initialRouteName: 'SplashScreen',
   },
 );
 

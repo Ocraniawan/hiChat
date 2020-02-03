@@ -1,7 +1,243 @@
+/* eslint-disable no-shadow */
 import React, {Component} from 'react';
-import {Text, View, StyleSheet, Image, TouchableHighlight} from 'react-native';
+import {
+  Text,
+  View,
+  StyleSheet,
+  Image,
+  TouchableHighlight,
+  Alert,
+  PermissionsAndroid,
+  ToastAndroid,
+  Platform,
+} from 'react-native';
 import {Input, Form, Item} from 'native-base';
 import firebase from 'react-native-firebase';
+import Geolocation from 'react-native-geolocation-service';
+export default class Register extends Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      fullname: '',
+      email: '',
+      password: '',
+      confirmpassword: '',
+      longitude: null,
+      latitude: null,
+      // isLoading: false,
+      // isSubmit: false,
+      errorMessage: null,
+    };
+  }
+
+  componentDidMount = async () => {
+    await this.getLocation();
+  };
+  hasLocationPermission = async () => {
+    if (
+      Platform.OS === 'ios' ||
+      (Platform.OS === 'android' && Platform.Version < 23)
+    ) {
+      return true;
+    }
+    const hasPermission = await PermissionsAndroid.check(
+      PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION,
+    );
+    if (hasPermission) {
+      return true;
+    }
+    const status = await PermissionsAndroid.request(
+      PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION,
+    );
+    if (status === PermissionsAndroid.RESULTS.GRANTED) {
+      return true;
+    }
+    if (status === PermissionsAndroid.RESULTS.DENIED) {
+      ToastAndroid.show(
+        'Location Permission Denied By User.',
+        ToastAndroid.LONG,
+      );
+    } else if (status === PermissionsAndroid.RESULTS.NEVER_ASK_AGAIN) {
+      ToastAndroid.show(
+        'Location Permission Revoked By User.',
+        ToastAndroid.LONG,
+      );
+    }
+    return false;
+  };
+
+  getLocation = async () => {
+    const hasLocationPermission = await this.hasLocationPermission();
+
+    if (!hasLocationPermission) {
+      return;
+    }
+
+    this.setState({loading: true}, () => {
+      Geolocation.getCurrentPosition(
+        position => {
+          this.setState({
+            latitude: position.coords.latitude,
+            longitude: position.coords.longitude,
+            loading: false,
+          });
+          console.warn(position);
+        },
+        error => {
+          this.setState({errorMessage: error, loading: false});
+          console.warn(error);
+        },
+        {
+          enableHighAccuracy: true,
+          timeout: 20000,
+          maximumAge: 2000,
+          distanceFilter: 50,
+          forceRequestLocation: true,
+        },
+      );
+    });
+  };
+
+  signUpButtonPress = () => {
+    const {fullname, email, password, confirmpassword} = this.state;
+    if (fullname.length < 1) {
+      ToastAndroid.show('Please input your fullname', ToastAndroid.LONG);
+    } else if (email.length < 6) {
+      ToastAndroid.show(
+        'Please input a valid email address',
+        ToastAndroid.LONG,
+      );
+    } else if (password.length < 6) {
+      ToastAndroid.show(
+        'Password must be at least 6 characters',
+        ToastAndroid.LONG,
+      );
+    } else {
+      if (password === confirmpassword) {
+        // this.setState({isLoading: true});
+        firebase
+          .auth()
+          .createUserWithEmailAndPassword(email, password)
+          .then(user => {
+            const uid = user.user.uid;
+            const email = user.user.email;
+
+            firebase
+              .database()
+              .ref('messages/' + uid)
+              .set({
+                isRegister: true,
+              });
+            firebase
+              .database()
+              .ref('users/' + uid)
+              .set({
+                id: uid,
+                fullname: fullname,
+                email: email,
+                status: 'Offline',
+                photo:
+                  'https://tucomparadordereformas.com/wp-content/uploads/2018/02/mujer.png',
+                latitude: this.state.latitude,
+                longitude: this.state.longitude,
+              })
+              .catch(error => {
+                ToastAndroid.show(error.message, ToastAndroid.LONG);
+                this.setState({
+                  name: '',
+                  email: '',
+                  password: '',
+                });
+              });
+            ToastAndroid.show(
+              'Your account is successfully registered!',
+              ToastAndroid.LONG,
+            );
+            this.props.navigation.navigate('Login');
+          })
+          .catch(error => {
+            this.setState({
+              isLoading: false,
+            });
+            Alert.alert(error.message);
+            console.log(error.message);
+          });
+      } else {
+        ToastAndroid.show(
+          'Password and Confirm Password did not match!',
+          ToastAndroid.LONG,
+        );
+      }
+    }
+  };
+
+  // Alert.alert(
+  //   'Register Success',
+  //   {text: 'OK', onPress: () => this.props.navigation.navigate('Login')},
+  //   {cancelable: false},
+  // ),
+
+  render() {
+    return (
+      <>
+        <View style={styles.root}>
+          <View style={styles.top}>
+            <Image
+              source={require('../assets/login.png')}
+              style={styles.image}
+            />
+          </View>
+          <View style={styles.menu}>
+            <Form style={styles.form}>
+              <Text style={styles.sign}>SIGN UP</Text>
+              <Item regular style={styles.input}>
+                <Input
+                  placeholder="Full Name"
+                  placeholderTextColor="#B5B5B5"
+                  value={this.state.fullname}
+                  onChangeText={fullname => this.setState({fullname})}
+                />
+              </Item>
+              <Item regular style={styles.input}>
+                <Input
+                  placeholder="Email"
+                  placeholderTextColor="#B5B5B5"
+                  value={this.state.email}
+                  onChangeText={email => this.setState({email})}
+                />
+              </Item>
+              <Item regular style={styles.input}>
+                <Input
+                  placeholder="Password"
+                  placeholderTextColor="#B5B5B5"
+                  secureTextEntry={true}
+                  value={this.state.password}
+                  onChangeText={password => this.setState({password})}
+                />
+              </Item>
+              <Item regular style={styles.input}>
+                <Input
+                  placeholder="Confirm Password"
+                  placeholderTextColor="#B5B5B5"
+                  secureTextEntry={true}
+                  value={this.state.confirmpassword}
+                  onChangeText={confirmpassword =>
+                    this.setState({confirmpassword})
+                  }
+                />
+              </Item>
+              <TouchableHighlight
+                style={[styles.buttonContainer, styles.registerButton]}
+                onPress={this.signUpButtonPress}>
+                <Text style={styles.loginText}>REGISTER</Text>
+              </TouchableHighlight>
+            </Form>
+          </View>
+        </View>
+      </>
+    );
+  }
+}
 
 const styles = StyleSheet.create({
   root: {
@@ -20,7 +256,7 @@ const styles = StyleSheet.create({
   },
   menu: {
     position: 'relative',
-    backgroundColor: '#3BB0BA',
+    backgroundColor: '#F4A771',
     borderTopRightRadius: 30,
     borderTopLeftRadius: 30,
     alignItems: 'center',
@@ -57,7 +293,7 @@ const styles = StyleSheet.create({
     alignSelf: 'center',
   },
   registerButton: {
-    backgroundColor: '#F4A771',
+    backgroundColor: '#3BB0BA',
   },
   loginText: {
     color: '#FBF5E5',
@@ -74,72 +310,3 @@ const styles = StyleSheet.create({
     color: '#FBF5E5',
   },
 });
-
-export default class Register extends Component {
-  constructor(props) {
-    super(props);
-    this.state = {email: '', password: '', errorMessage: null};
-  }
-
-  signUpButtonPress = () => {
-    const {email, password} = this.state;
-    firebase
-      .auth()
-      .createUserWithEmailAndPassword(email, password)
-      .then(user => this.props.navigation.navigate('Login'))
-      .catch(error => this.setState({errorMessage: error.message}));
-  };
-
-  render() {
-    return (
-      <>
-        <View style={styles.root}>
-          <View style={styles.top}>
-            <Image
-              source={require('../assets/login.png')}
-              style={styles.image}
-            />
-          </View>
-          <View style={styles.menu}>
-            <Form style={styles.form}>
-              <Text style={styles.sign}>SIGN UP</Text>
-              <Item regular style={styles.input}>
-                <Input
-                  placeholder="Email"
-                  placeholderTextColor="#B5B5B5"
-                  value={this.state.email}
-                  onChangeText={email => this.setState({email})}
-                  // onChange={e => this.setState({username: e.nativeEvent.text})}
-                />
-              </Item>
-              <Item regular style={styles.input}>
-                <Input
-                  placeholder="Password"
-                  placeholderTextColor="#B5B5B5"
-                  secureTextEntry={true}
-                  value={this.state.password}
-                  onChangeText={password => this.setState({password})}
-                  // onChange={e => this.setState({password: e.nativeEvent.text})}
-                />
-              </Item>
-              <Item regular style={styles.input}>
-                <Input
-                  placeholder="Confirm Password"
-                  placeholderTextColor="#B5B5B5"
-                  secureTextEntry={true}
-                  // value={this.state.password}
-                  // onChange={e => this.setState({password: e.nativeEvent.text})}
-                />
-              </Item>
-              <TouchableHighlight
-                style={[styles.buttonContainer, styles.registerButton]}
-                onPress={this.signUpButtonPress}>
-                <Text style={styles.loginText}>REGISTER</Text>
-              </TouchableHighlight>
-            </Form>
-          </View>
-        </View>
-      </>
-    );
-  }
-}
