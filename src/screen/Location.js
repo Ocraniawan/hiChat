@@ -13,7 +13,7 @@ import {
 } from 'react-native';
 import {Header, Title} from 'native-base';
 import AsyncStorage from '@react-native-community/async-storage';
-import MapView, {Marker} from 'react-native-maps';
+import MapView, {Marker, PROVIDER_GOOGLE} from 'react-native-maps';
 import Geolocation from 'react-native-geolocation-service';
 import firebase from 'react-native-firebase';
 import Carousel from 'react-native-snap-carousel';
@@ -127,8 +127,14 @@ export default class Location extends Component {
     });
   };
 
-  onCarouselItemChange = index => {
-    // let location = this.state.userList[index];
+  onCorouselItemChange = index => {
+    let location = this.state.userList[index];
+    this._map.animateToRegion({
+      latitude: location.latitude,
+      longitude: location.longitude,
+      latitudeDelta: 0.00922,
+      longitudeDelta: 0.00421 * 1.5,
+    });
   };
   renderCarouselItem = ({item}) => (
     <TouchableOpacity
@@ -161,6 +167,8 @@ export default class Location extends Component {
           <MapView
             style={styles.mapView}
             showsMyLocationButton={true}
+            provider={PROVIDER_GOOGLE}
+            ref={map => (this._map = map)}
             showsIndoorLevelPicker={true}
             showsUserLocation={true}
             zoomControlEnabled={true}
@@ -211,7 +219,7 @@ export default class Location extends Component {
             sliderWidth={Dimensions.get('window').width}
             itemWidth={230}
             removeClippedSubviews={false}
-            onSnapToItem={index => this.onCarouselItemChange(index)}
+            onSnapToItem={index => this.onCorouselItemChange(index)}
           />
         </View>
       </>

@@ -6,11 +6,13 @@ import {
   FlatList,
   TouchableOpacity,
   Image,
+  StatusBar,
 } from 'react-native';
 import {Content, List, ListItem, Left, Body, Right, Item} from 'native-base';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import AsyncStorage from '@react-native-community/async-storage';
 import firebase from 'react-native-firebase';
+import LinearGradient from 'react-native-linear-gradient';
 
 const contact = [
   {
@@ -108,18 +110,21 @@ class Home extends Component {
   render(props) {
     return (
       <>
+        <StatusBar barStyle="light-content" backgroundColor="#075E54" />
         <View style={styles.root}>
-          <View style={styles.header}>
-            <Item style={styles.itemHeader}>
-              <Left>
-                <Text style={styles.textHeader}>Message</Text>
-              </Left>
-              <Right>
-                {/* <Input placeholder="Search" style={styles.searchHeader} /> */}
-                <Icon name="search" size={20} />
-              </Right>
-            </Item>
-          </View>
+          <LinearGradient colors={['#128C7E', '#148E7F']} style={styles.header}>
+            <View style={styles.header}>
+              <Item style={styles.itemHeader}>
+                <Left>
+                  <Text style={styles.textHeader}>Message</Text>
+                </Left>
+                <Right>
+                  {/* <Input placeholder="Search" style={styles.searchHeader} /> */}
+                  <Icon name="search" size={20} color="white" />
+                </Right>
+              </Item>
+            </View>
+          </LinearGradient>
           <View style={styles.body}>
             <FlatList
               data={this.state.userList}
@@ -172,12 +177,12 @@ class Home extends Component {
 const styles = StyleSheet.create({
   root: {
     flex: 1,
-    backgroundColor: '#FBF5E5',
+    backgroundColor: 'white',
   },
   header: {
     alignItems: 'center',
     justifyContent: 'space-between',
-    backgroundColor: '#FBF5E5',
+    // backgroundColor: '#128C7E',
     elevation: 10,
   },
   itemHeader: {
@@ -185,11 +190,12 @@ const styles = StyleSheet.create({
     padding: 20,
   },
   searchHeader: {
-    color: 'black',
+    color: 'white',
     width: 150,
   },
   textHeader: {
     fontSize: 18,
+    color: 'white',
     fontWeight: 'bold',
     textAlign: 'left',
   },

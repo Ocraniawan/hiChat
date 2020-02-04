@@ -62,10 +62,10 @@ export default class Chat extends Component {
   };
 
   componentDidMount = async () => {
-    const userId = await AsyncStorage.getItem('userid');
-    const userName = await AsyncStorage.getItem('user.name');
-    const userAvatar = await AsyncStorage.getItem('user.photo');
-    this.setState({userId, userName, userAvatar});
+    // const userId = await AsyncStorage.getItem('userid');
+    // const userName = await AsyncStorage.getItem('user.name');
+    // const userAvatar = await AsyncStorage.getItem('user.photo');
+    // this.setState({userId, userName, userAvatar});
     firebase
       .database()
       .ref('messages')
@@ -86,9 +86,15 @@ export default class Chat extends Component {
           right: {
             backgroundColor: '#3BB0BA',
           },
+          left: {
+            backgroundColor: '#F4A771',
+          },
         }}
         textStyle={{
           right: {
+            color: 'white',
+          },
+          left: {
             color: 'white',
           },
         }}
@@ -122,21 +128,14 @@ export default class Chat extends Component {
               </TouchableOpacity>
             </Left>
             <Body style={styles.body}>
-              <TouchableOpacity
-                onPress={() =>
-                  this.props.navigation.push('UserProfile', {
-                    id: this.props.id,
-                  })
-                }>
-                <Image
-                  source={
-                    this.state.person.photo
-                      ? {uri: this.state.person.photo}
-                      : require('../../assets/Logo.png')
-                  }
-                  style={styles.profilePic}
-                />
-              </TouchableOpacity>
+              <Image
+                source={
+                  this.state.person.photo
+                    ? {uri: this.state.person.photo}
+                    : require('../../assets/Logo.png')
+                }
+                style={styles.profilePic}
+              />
               <Title style={styles.title}>{this.state.person.fullname}</Title>
             </Body>
             <Right style={styles.right}>

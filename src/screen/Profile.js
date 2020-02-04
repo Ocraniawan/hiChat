@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 import React, {Component} from 'react';
 import {
   Text,
@@ -5,12 +6,12 @@ import {
   StyleSheet,
   ImageBackground,
   TouchableOpacity,
-  TextInput,
   Image,
   Alert,
   PermissionsAndroid,
   ToastAndroid,
   ActivityIndicator,
+  StatusBar,
 } from 'react-native';
 import {Card, ListItem, Item, Right, Body, Left} from 'native-base';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
@@ -26,13 +27,14 @@ export default class Profile extends Component {
     this.state = {
       name: '',
       email: '',
+      phone: '',
+      about: '',
       currentUser: null,
       userId: null,
       permissionsGranted: null,
       errorMessage: null,
       loading: false,
       updatesEnabled: false,
-      location: {},
       photo: null,
       imageUri: null,
       imgSource: '',
@@ -52,6 +54,8 @@ export default class Profile extends Component {
         name: item.fullname,
         email: item.email,
         photo: item.photo,
+        phone: item.phone,
+        about: item.about,
       });
     });
   };
@@ -149,9 +153,11 @@ export default class Profile extends Component {
   };
 
   render() {
-    const {email, name, photo} = this.state;
+    const {phone, email, name, photo, about} = this.state;
+    // console.log(this.state.item);
     return (
       <>
+        <StatusBar barStyle="light-content" backgroundColor="#1C8B82" />
         <View style={styles.root}>
           <View style={styles.imageform}>
             <ImageBackground
@@ -170,73 +176,64 @@ export default class Profile extends Component {
               </TouchableOpacity>
             </ImageBackground>
           </View>
-          <View style={styles.menu}>
-            <Card style={styles.card}>
-              <ListItem style={styles.listItem}>
-                <Icon name="account-card-details" style={styles.listLeft} />
-                <Text style={styles.listBody}>{name}</Text>
-              </ListItem>
-              <ListItem style={styles.listItem}>
-                <Icon name="contact-mail" style={styles.listLeft} />
-                <Text style={styles.listBody}>{email}</Text>
-              </ListItem>
-            </Card>
-          </View>
-          {/* card bottom */}
-          <View style={styles.menutwo}>
-            <Card style={styles.cardtwo}>
-              <ListItem style={styles.listItem2}>
-                <Left>
-                  <Icon name="settings-outline" style={styles.Left} />
-                  <Text style={styles.Body}>Settings</Text>
-                </Left>
-                <Right>
-                  <Icon
-                    name="arrow-right-drop-circle-outline"
-                    style={styles.Right}
-                  />
-                </Right>
-              </ListItem>
-              <ListItem style={styles.listItem2}>
-                <Left>
-                  <Icon name="map-marker-multiple" style={styles.Left} />
-                  <Text style={styles.Body}>My Address</Text>
-                </Left>
-                <Right>
-                  <Icon
-                    name="arrow-right-drop-circle-outline"
-                    style={styles.Right}
-                  />
-                </Right>
-              </ListItem>
-              <ListItem style={styles.listItem2}>
-                <Left>
-                  <Icon name="account-multiple" style={styles.Left} />
-                  <Text style={styles.Body}>Account</Text>
-                </Left>
-                <Right>
-                  <Icon
-                    name="arrow-right-drop-circle-outline"
-                    style={styles.Right}
-                  />
-                </Right>
-              </ListItem>
-              <ListItem style={styles.listItem2}>
-                <Left>
-                  <Icon name="logout-variant" style={styles.LeftLogout} />
-                  <Text style={styles.BodyLogout}>LOG OUT</Text>
-                </Left>
-                <Right>
-                  <TouchableOpacity onPress={this.signOutUser}>
-                    <Icon
-                      name="arrow-right-drop-circle-outline"
-                      style={styles.RightLogout}
-                    />
-                  </TouchableOpacity>
-                </Right>
-              </ListItem>
-            </Card>
-          </View>
+          <LinearGradient colors={['#A6E0EE', '#FBF5E5']} style={styles.home}>
+            <View style={styles.menu}>
+              <Card style={styles.card}>
+                <ListItem style={styles.listItem}>
+                  <Icon name="account" style={styles.listLeft} />
+                  <Text style={styles.listText}>{name}</Text>
+                </ListItem>
+                <ListItem style={styles.listItem}>
+                  <Icon name="mail-ru" style={styles.listLeft} />
+                  <Text style={styles.listText}>{email}</Text>
+                </ListItem>
+              </Card>
+            </View>
+            {/* card bottom */}
+            <View style={styles.menutwo}>
+              <Card style={styles.cardtwo}>
+                <ListItem style={styles.listItem}>
+                  <Icon name="phone" style={styles.listLeft} />
+                  <Text style={styles.listText}>{phone}</Text>
+                </ListItem>
+                <ListItem style={styles.listItem}>
+                  <Icon name="information-outline" style={styles.listLeft} />
+                  <Text style={styles.listText}>{about}</Text>
+                </ListItem>
+                <ListItem style={styles.listItem2}>
+                  <Left>
+                    <Icon name="account-edit" style={styles.Left} />
+                    <Text style={styles.Body}>Edit Profile</Text>
+                  </Left>
+                  <Right>
+                    <TouchableOpacity
+                      onPress={() =>
+                        this.props.navigation.navigate('editProfile')
+                      }>
+                      <Icon
+                        name="arrow-right-drop-circle-outline"
+                        style={styles.Right}
+                      />
+                    </TouchableOpacity>
+                  </Right>
+                </ListItem>
+                <ListItem style={styles.listItem2}>
+                  <Left>
+                    <Icon name="logout-variant" style={styles.LeftLogout} />
+                    <Text style={styles.BodyLogout}>LOG OUT</Text>
+                  </Left>
+                  <Right>
+                    <TouchableOpacity onPress={this.signOutUser}>
+                      <Icon
+                        name="arrow-right-drop-circle-outline"
+                        style={styles.RightLogout}
+                      />
+                    </TouchableOpacity>
+                  </Right>
+                </ListItem>
+              </Card>
+            </View>
+          </LinearGradient>
         </View>
       </>
     );
@@ -334,6 +331,12 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     color: '#3BB0BA',
   },
+  listText: {
+    fontSize: 16,
+    width: 250,
+    fontWeight: 'bold',
+    color: '#5A5A5A',
+  },
   Left: {
     color: '#3BB0BA',
     fontSize: 25,
@@ -363,5 +366,10 @@ const styles = StyleSheet.create({
     color: '#F4A771',
     fontSize: 25,
     marginLeft: 20,
+  },
+  home: {
+    flex: 1,
+    alignItems: 'center',
+    justifyContent: 'center',
   },
 });

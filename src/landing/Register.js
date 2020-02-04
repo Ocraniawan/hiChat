@@ -140,6 +140,8 @@ export default class Register extends Component {
                   'https://tucomparadordereformas.com/wp-content/uploads/2018/02/mujer.png',
                 latitude: this.state.latitude,
                 longitude: this.state.longitude,
+                phone: "Please Change's your Phone Number",
+                about: "Hi There! I'm Using HiChat.",
               })
               .catch(error => {
                 ToastAndroid.show(error.message, ToastAndroid.LONG);
