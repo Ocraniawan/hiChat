@@ -3,18 +3,16 @@ import {
   View,
   Text,
   TouchableOpacity,
-  Image,
   StyleSheet,
-  ImageBackground,
   ToastAndroid,
   Alert,
+  StatusBar,
 } from 'react-native';
 import {Header, Left, Body, Title, Item, Label, Input} from 'native-base';
-import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import Icons from 'react-native-vector-icons/Ionicons';
 import firebase from 'react-native-firebase';
-import {Button} from 'react-native-elements';
 import {Bubbles} from 'react-native-loader';
+import LinearGradient from 'react-native-linear-gradient';
 
 export default class editProfile extends Component {
   constructor(props) {
@@ -26,7 +24,6 @@ export default class editProfile extends Component {
       about: '',
       id: '',
     };
-    // console.log(person);
     this.handleEdit = this.handleEdit.bind(this);
   }
 
@@ -100,6 +97,7 @@ export default class editProfile extends Component {
     );
     return (
       <>
+        <StatusBar barStyle="light-content" backgroundColor="#075E54" />
         <View style={styles.root}>
           <Header style={styles.header}>
             <Left>
@@ -126,7 +124,7 @@ export default class editProfile extends Component {
           <View>
             {!isLoading ? (
               <View style={styles.loader}>
-                <Bubbles size={10} style={styles.loadBuble} color="#3BB0BA" />
+                <Bubbles size={10} style={styles.loadBuble} color="#128C7E" />
               </View>
             ) : (
               <View style={styles.mainBody}>
@@ -150,7 +148,8 @@ export default class editProfile extends Component {
                     type="text"
                     id="phone"
                     name="phone"
-                    keyboardType="phone-pad"
+                    keyboardType="number-pad"
+                    maxLength={13}
                     value={this.state.phone}
                     onChangeText={value => {
                       this.setState({
@@ -165,7 +164,7 @@ export default class editProfile extends Component {
                     type="text"
                     id="about"
                     name="about"
-                    // maxLength={10}
+                    maxLength={30}
                     value={this.state.about}
                     onChangeText={value => {
                       this.setState({
@@ -193,7 +192,7 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   header: {
-    backgroundColor: '#3BB0BA',
+    backgroundColor: '#128C7E',
     height: 55,
     justifyContent: 'space-between',
   },
@@ -228,7 +227,7 @@ const styles = StyleSheet.create({
     color: '#3BB0BA',
     height: 45,
     width: '100%',
-    backgroundColor: '#3BB0BA',
+    backgroundColor: '#128C7E',
     borderRadius: 10,
     marginTop: 5,
     justifyContent: 'center',
@@ -244,7 +243,7 @@ const styles = StyleSheet.create({
   loader: {
     justifyContent: 'center',
     alignItems: 'center',
-    marginTop: 50,
+    marginTop: 100,
   },
-  loadBuble: {marginTop: 50},
+  loadBuble: {marginTop: 100},
 });

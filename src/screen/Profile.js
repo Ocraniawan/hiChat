@@ -16,6 +16,7 @@ import {
 import {Card, ListItem, Item, Right, Body, Left} from 'native-base';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import firebase from 'react-native-firebase';
+import {Bubbles} from 'react-native-loader';
 import LinearGradient from 'react-native-linear-gradient';
 import AsyncStorage from '@react-native-community/async-storage';
 import ImagePicker from 'react-native-image-picker';
@@ -32,14 +33,9 @@ export default class Profile extends Component {
       currentUser: null,
       userId: null,
       permissionsGranted: null,
-      errorMessage: null,
-      loading: false,
       updatesEnabled: false,
       photo: null,
-      imageUri: null,
-      imgSource: '',
-      uploading: false,
-      refreshing: false,
+      isLoading: false,
     };
   }
 
@@ -77,7 +73,7 @@ export default class Profile extends Component {
       await AsyncStorage.clear();
       firebase
         .auth()
-        .signOut()
+        .signOut(ToastAndroid.show('Logout success', ToastAndroid.LONG))
         .then(() => this.props.navigation.navigate('Login'));
     });
   };
@@ -154,87 +150,99 @@ export default class Profile extends Component {
 
   render() {
     const {phone, email, name, photo, about} = this.state;
-    // console.log(this.state.item);
+    const {isLoading} = this.state;
+    setTimeout(
+      function() {
+        this.setState({isLoading: true});
+      }.bind(this),
+      2000,
+    );
     return (
       <>
-        <StatusBar barStyle="light-content" backgroundColor="#1C8B82" />
-        <View style={styles.root}>
-          <View style={styles.imageform}>
-            <ImageBackground
-              source={{
-                uri:
-                  'https://image.freepik.com/free-vector/social-network-photo-post-youngsters-people-posting-selfie-phot_102902-576.jpg',
-              }}
-              style={styles.imageBackground}>
-              <TouchableOpacity onPress={this.changeImage}>
-                <View style={styles.imageView}>
-                  <Image source={{uri: photo}} style={styles.image} />
-                  <View style={styles.editPhoto}>
-                    <Icon name="pencil" style={styles.iconPhoto} />
-                  </View>
-                </View>
-              </TouchableOpacity>
-            </ImageBackground>
+        <StatusBar barStyle="light-content" backgroundColor="#075E54" />
+        {!isLoading ? (
+          <View style={styles.loader}>
+            <Bubbles size={10} style={styles.loadBuble} color="#128C7E" />
           </View>
-          <LinearGradient colors={['#A6E0EE', '#FBF5E5']} style={styles.home}>
-            <View style={styles.menu}>
-              <Card style={styles.card}>
-                <ListItem style={styles.listItem}>
-                  <Icon name="account" style={styles.listLeft} />
-                  <Text style={styles.listText}>{name}</Text>
-                </ListItem>
-                <ListItem style={styles.listItem}>
-                  <Icon name="mail-ru" style={styles.listLeft} />
-                  <Text style={styles.listText}>{email}</Text>
-                </ListItem>
-              </Card>
+        ) : (
+          <View style={styles.root}>
+            <View style={styles.imageform}>
+              <ImageBackground
+                source={{
+                  uri:
+                    'https://image.freepik.com/free-vector/social-network-photo-post-youngsters-people-posting-selfie-phot_102902-576.jpg',
+                }}
+                style={styles.imageBackground}>
+                <TouchableOpacity onPress={this.changeImage}>
+                  <View style={styles.imageView}>
+                    <Image source={{uri: photo}} style={styles.image} />
+                    <View style={styles.editPhoto}>
+                      <Icon name="pencil" style={styles.iconPhoto} />
+                    </View>
+                  </View>
+                </TouchableOpacity>
+              </ImageBackground>
             </View>
-            {/* card bottom */}
-            <View style={styles.menutwo}>
-              <Card style={styles.cardtwo}>
-                <ListItem style={styles.listItem}>
-                  <Icon name="phone" style={styles.listLeft} />
-                  <Text style={styles.listText}>{phone}</Text>
-                </ListItem>
-                <ListItem style={styles.listItem}>
-                  <Icon name="information-outline" style={styles.listLeft} />
-                  <Text style={styles.listText}>{about}</Text>
-                </ListItem>
-                <ListItem style={styles.listItem2}>
-                  <Left>
-                    <Icon name="account-edit" style={styles.Left} />
-                    <Text style={styles.Body}>Edit Profile</Text>
-                  </Left>
-                  <Right>
-                    <TouchableOpacity
-                      onPress={() =>
-                        this.props.navigation.navigate('editProfile')
-                      }>
-                      <Icon
-                        name="arrow-right-drop-circle-outline"
-                        style={styles.Right}
-                      />
-                    </TouchableOpacity>
-                  </Right>
-                </ListItem>
-                <ListItem style={styles.listItem2}>
-                  <Left>
-                    <Icon name="logout-variant" style={styles.LeftLogout} />
-                    <Text style={styles.BodyLogout}>LOG OUT</Text>
-                  </Left>
-                  <Right>
-                    <TouchableOpacity onPress={this.signOutUser}>
-                      <Icon
-                        name="arrow-right-drop-circle-outline"
-                        style={styles.RightLogout}
-                      />
-                    </TouchableOpacity>
-                  </Right>
-                </ListItem>
-              </Card>
-            </View>
-          </LinearGradient>
-        </View>
+            <LinearGradient colors={['#A6E0EE', '#FBF5E5']} style={styles.home}>
+              <View style={styles.menu}>
+                <Card style={styles.card}>
+                  <ListItem style={styles.listItem}>
+                    <Icon name="account" style={styles.listLeft} />
+                    <Text style={styles.listText}>{name}</Text>
+                  </ListItem>
+                  <ListItem style={styles.listItem}>
+                    <Icon name="mail-ru" style={styles.listLeft} />
+                    <Text style={styles.listText}>{email}</Text>
+                  </ListItem>
+                </Card>
+              </View>
+              {/* card bottom */}
+              <View style={styles.menutwo}>
+                <Card style={styles.cardtwo}>
+                  <ListItem style={styles.listItem}>
+                    <Icon name="phone" style={styles.listLeft} />
+                    <Text style={styles.listText}>{phone}</Text>
+                  </ListItem>
+                  <ListItem style={styles.listItem}>
+                    <Icon name="information-outline" style={styles.listLeft} />
+                    <Text style={styles.listAbout}>{about}</Text>
+                  </ListItem>
+                  <ListItem style={styles.listItem2}>
+                    <Left>
+                      <Icon name="account-edit" style={styles.Left} />
+                      <Text style={styles.Body}>Edit Profile</Text>
+                    </Left>
+                    <Right>
+                      <TouchableOpacity
+                        onPress={() =>
+                          this.props.navigation.navigate('editProfile')
+                        }>
+                        <Icon
+                          name="arrow-right-drop-circle-outline"
+                          style={styles.Right}
+                        />
+                      </TouchableOpacity>
+                    </Right>
+                  </ListItem>
+                  <ListItem style={styles.listItem2}>
+                    <Left>
+                      <Icon name="logout-variant" style={styles.LeftLogout} />
+                      <Text style={styles.BodyLogout}>LOG OUT</Text>
+                    </Left>
+                    <Right>
+                      <TouchableOpacity onPress={this.signOutUser}>
+                        <Icon
+                          name="arrow-right-drop-circle-outline"
+                          style={styles.RightLogout}
+                        />
+                      </TouchableOpacity>
+                    </Right>
+                  </ListItem>
+                </Card>
+              </View>
+            </LinearGradient>
+          </View>
+        )}
       </>
     );
   }
@@ -273,7 +281,7 @@ const styles = StyleSheet.create({
     alignSelf: 'center',
   },
   editPhoto: {
-    backgroundColor: '#3BB0BA',
+    backgroundColor: '#128C7E',
     justifyContent: 'center',
     flexDirection: 'row',
     height: 40,
@@ -321,7 +329,7 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
   },
   listLeft: {
-    color: '#3BB0BA',
+    color: '#128C7E',
     marginRight: 10,
     fontSize: 25,
   },
@@ -329,7 +337,7 @@ const styles = StyleSheet.create({
     fontSize: 16,
     width: 250,
     fontWeight: 'bold',
-    color: '#3BB0BA',
+    color: '#128C7E',
   },
   listText: {
     fontSize: 16,
@@ -337,33 +345,39 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     color: '#5A5A5A',
   },
+  listAbout: {
+    fontSize: 16,
+    width: 250,
+    // fontWeight: 'bold',
+    color: '#5A5A5A',
+  },
   Left: {
-    color: '#3BB0BA',
+    color: '#075E54',
     fontSize: 25,
     marginRight: 20,
   },
   Body: {
     fontSize: 18,
     fontWeight: 'bold',
-    color: '#3BB0BA',
+    color: '#075E54',
   },
   Right: {
-    color: '#3BB0BA',
+    color: '#075E54',
     fontSize: 25,
     marginLeft: 20,
   },
   LeftLogout: {
-    color: '#F4A771',
+    color: '#DD4B39',
     fontSize: 25,
     marginRight: 20,
   },
   BodyLogout: {
     fontSize: 18,
     fontWeight: 'bold',
-    color: '#F4A771',
+    color: '#DD4B39',
   },
   RightLogout: {
-    color: '#F4A771',
+    color: '#DD4B39',
     fontSize: 25,
     marginLeft: 20,
   },
@@ -371,5 +385,10 @@ const styles = StyleSheet.create({
     flex: 1,
     alignItems: 'center',
     justifyContent: 'center',
+  },
+  loader: {
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginTop: 300,
   },
 });

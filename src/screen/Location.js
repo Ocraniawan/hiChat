@@ -10,6 +10,7 @@ import {
   PermissionsAndroid,
   Dimensions,
   StyleSheet,
+  StatusBar,
 } from 'react-native';
 import {Header, Title} from 'native-base';
 import AsyncStorage from '@react-native-community/async-storage';
@@ -17,6 +18,7 @@ import MapView, {Marker, PROVIDER_GOOGLE} from 'react-native-maps';
 import Geolocation from 'react-native-geolocation-service';
 import firebase from 'react-native-firebase';
 import Carousel from 'react-native-snap-carousel';
+import {Bubbles} from 'react-native-loader';
 
 const {width, height} = Dimensions.get('window');
 const ASPECT_RATIO = width / height;
@@ -27,6 +29,7 @@ export default class Location extends Component {
   state = {
     initial: 'state',
     mapRegion: null,
+    isLoading: false,
     latitude: 0,
     longitude: 0,
     userList: [],
@@ -158,69 +161,85 @@ export default class Location extends Component {
   );
 
   render() {
+    const {isLoading} = this.state;
+    setTimeout(
+      function() {
+        this.setState({isLoading: true});
+      }.bind(this),
+      2000,
+    );
     return (
       <>
+        <StatusBar barStyle="light-content" backgroundColor="#075E54" />
         <View style={styles.root}>
           <Header style={styles.header}>
-            <Title style={styles.title}>MAPS</Title>
+            <Title style={styles.title}>Friend's Location</Title>
           </Header>
-          <MapView
-            style={styles.mapView}
-            showsMyLocationButton={true}
-            provider={PROVIDER_GOOGLE}
-            ref={map => (this._map = map)}
-            showsIndoorLevelPicker={true}
-            showsUserLocation={true}
-            zoomControlEnabled={true}
-            showsCompass={true}
-            showsTraffic={true}
-            region={this.state.mapRegion}
-            initialRegion={{
-              latitude: -7.755322,
-              longitude: 110.381174,
-              latitudeDelta: LATITUDE_DELTA,
-              longitudeDelta: LONGITUDE_DELTA,
-            }}>
-            {this.state.userList.map(item => {
-              return (
-                <Marker
-                  key={item.id}
-                  title={item.fullname}
-                  description={item.status}
-                  draggable
-                  coordinate={{
-                    latitude: item.latitude || 0,
-                    longitude: item.longitude || 0,
-                  }}
-                  onCalloutPress={() => {
-                    this.props.navigation.navigate('FriendsProfile', {
-                      item,
-                    });
-                  }}>
-                  <View>
-                    <Image
-                      source={{uri: item.photo}}
-                      style={{width: 40, height: 40, borderRadius: 50}}
-                    />
-                    <Text>{item.name}</Text>
-                  </View>
-                </Marker>
-              );
-            })}
-          </MapView>
+          {!isLoading ? (
+            <View style={styles.loader}>
+              <Bubbles size={10} style={styles.loadBuble} color="#128C7E" />
+            </View>
+          ) : (
+            <View style={styles.mapView}>
+              <MapView
+                style={styles.mapView}
+                showsMyLocationButton={true}
+                provider={PROVIDER_GOOGLE}
+                ref={map => (this._map = map)}
+                showsIndoorLevelPicker={true}
+                showsUserLocation={true}
+                zoomControlEnabled={true}
+                showsCompass={true}
+                showsTraffic={true}
+                region={this.state.mapRegion}
+                initialRegion={{
+                  latitude: -7.755322,
+                  longitude: 110.381174,
+                  latitudeDelta: LATITUDE_DELTA,
+                  longitudeDelta: LONGITUDE_DELTA,
+                }}>
+                {this.state.userList.map(item => {
+                  return (
+                    <Marker
+                      key={item.id}
+                      title={item.fullname}
+                      description={item.status}
+                      draggable
+                      coordinate={{
+                        latitude: item.latitude || 0,
+                        longitude: item.longitude || 0,
+                      }}
+                      onCalloutPress={() => {
+                        this.props.navigation.navigate('FriendsProfile', {
+                          item,
+                        });
+                      }}>
+                      <View>
+                        <Image
+                          source={{uri: item.photo}}
+                          style={{width: 40, height: 40, borderRadius: 50}}
+                        />
+                        <Text>{item.name}</Text>
+                      </View>
+                    </Marker>
+                  );
+                })}
+              </MapView>
 
-          <Carousel
-            ref={c => {
-              this._carousel = c;
-            }}
-            data={this.state.userList}
-            containerCustomStyle={styles.Carousel}
-            renderItem={this.renderCarouselItem}
-            sliderWidth={Dimensions.get('window').width}
-            itemWidth={230}
-            removeClippedSubviews={false}
-            onSnapToItem={index => this.onCorouselItemChange(index)}
-          />
+              <Carousel
+                ref={c => {
+                  this._carousel = c;
+                }}
+                data={this.state.userList}
+                containerCustomStyle={styles.Carousel}
+                renderItem={this.renderCarouselItem}
+                sliderWidth={Dimensions.get('window').width}
+                itemWidth={230}
+                removeClippedSubviews={false}
+                onSnapToItem={index => this.onCorouselItemChange(index)}
+              />
+            </View>
+          )}
         </View>
       </>
     );
@@ -236,16 +255,16 @@ const styles = StyleSheet.create({
     bottom: 0,
   },
   header: {
-    backgroundColor: '#FBF5E5',
+    backgroundColor: '#128C7E',
     elevation: 10,
-    height: 40,
+    height: 50,
     justifyContent: 'center',
     alignItems: 'center',
   },
   title: {
     fontSize: 18,
     fontWeight: 'bold',
-    color: 'black',
+    color: 'white',
   },
   mapView: {
     width: '100%',
@@ -279,5 +298,10 @@ const styles = StyleSheet.create({
     color: 'white',
     fontSize: 12,
     alignSelf: 'center',
+  },
+  loader: {
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginTop: 300,
   },
 });

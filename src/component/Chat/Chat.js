@@ -1,5 +1,11 @@
 import React, {Component} from 'react';
-import {View, TouchableOpacity, Image, StyleSheet} from 'react-native';
+import {
+  View,
+  TouchableOpacity,
+  Image,
+  StyleSheet,
+  StatusBar,
+} from 'react-native';
 import {Header, Left, Body, Title, Right} from 'native-base';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import Icons from 'react-native-vector-icons/Ionicons';
@@ -62,10 +68,10 @@ export default class Chat extends Component {
   };
 
   componentDidMount = async () => {
-    // const userId = await AsyncStorage.getItem('userid');
-    // const userName = await AsyncStorage.getItem('user.name');
-    // const userAvatar = await AsyncStorage.getItem('user.photo');
-    // this.setState({userId, userName, userAvatar});
+    const userId = await AsyncStorage.getItem('userid');
+    const userName = await AsyncStorage.getItem('users.name');
+    const userAvatar = await AsyncStorage.getItem('users.photo');
+    this.setState({userId, userName, userAvatar});
     firebase
       .database()
       .ref('messages')
@@ -87,7 +93,7 @@ export default class Chat extends Component {
             backgroundColor: '#3BB0BA',
           },
           left: {
-            backgroundColor: '#F4A771',
+            backgroundColor: '#66757F',
           },
         }}
         textStyle={{
@@ -115,6 +121,7 @@ export default class Chat extends Component {
   render() {
     return (
       <>
+        <StatusBar barStyle="light-content" backgroundColor="#075E54" />
         <View style={styles.root}>
           <Header style={styles.header}>
             <Left>
@@ -152,6 +159,7 @@ export default class Chat extends Component {
           </Header>
           <View style={styles.chatForm}>
             <GiftedChat
+              alwaysShowSend={true}
               renderSend={this.renderSend}
               renderBubble={this.renderBubble}
               text={this.state.message}
@@ -176,7 +184,7 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   header: {
-    backgroundColor: '#3BB0BA',
+    backgroundColor: '#128C7E',
     height: 55,
     justifyContent: 'space-between',
   },

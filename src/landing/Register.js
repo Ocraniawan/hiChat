@@ -10,6 +10,7 @@ import {
   PermissionsAndroid,
   ToastAndroid,
   Platform,
+  StatusBar,
 } from 'react-native';
 import {Input, Form, Item} from 'native-base';
 import firebase from 'react-native-firebase';
@@ -137,7 +138,7 @@ export default class Register extends Component {
                 email: email,
                 status: 'Offline',
                 photo:
-                  'https://tucomparadordereformas.com/wp-content/uploads/2018/02/mujer.png',
+                  'https://d2ifuh1csrnat0.cloudfront.net/img/profile-pictures/avatar.png',
                 latitude: this.state.latitude,
                 longitude: this.state.longitude,
                 phone: "Please Change's your Phone Number",
@@ -182,6 +183,7 @@ export default class Register extends Component {
   render() {
     return (
       <>
+        <StatusBar barStyle="light-content" backgroundColor="#075E54" />
         <View style={styles.root}>
           <View style={styles.top}>
             <Image
@@ -234,6 +236,13 @@ export default class Register extends Component {
                 onPress={this.signUpButtonPress}>
                 <Text style={styles.loginText}>REGISTER</Text>
               </TouchableHighlight>
+              <View style={styles.wrapsignup}>
+                <Text>Already have an account? </Text>
+                <TouchableHighlight
+                  onPress={() => this.props.navigation.navigate('Login')}>
+                  <Text style={styles.textsignup}> Sign in!</Text>
+                </TouchableHighlight>
+              </View>
             </Form>
           </View>
         </View>
@@ -254,8 +263,8 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
   image: {
-    height: 350,
-    width: 350,
+    height: 250,
+    width: 250,
   },
   menu: {
     position: 'relative',
@@ -302,14 +311,12 @@ const styles = StyleSheet.create({
     color: '#FBF5E5',
     fontWeight: 'bold',
   },
-  facebookButton: {
-    backgroundColor: '#456CB0',
+  wrapsignup: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    paddingTop: 20,
+    marginBottom: 20,
   },
-  or: {
-    fontSize: 14,
-    fontWeight: 'bold',
-    alignSelf: 'center',
-    marginBottom: 10,
-    color: '#FBF5E5',
-  },
+  textsignup: {color: '#FBF5E5', fontSize: 16},
 });

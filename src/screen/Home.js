@@ -13,69 +13,7 @@ import Icon from 'react-native-vector-icons/FontAwesome';
 import AsyncStorage from '@react-native-community/async-storage';
 import firebase from 'react-native-firebase';
 import LinearGradient from 'react-native-linear-gradient';
-
-const contact = [
-  {
-    id: 1,
-    name: 'Babe',
-    chat: 'Hello, Wake Up Baby',
-    time: '05:40',
-  },
-  {
-    id: 2,
-    name: 'Tommy',
-    chat: 'Hi',
-    time: '11:35',
-  },
-  {
-    id: 3,
-    name: 'James',
-    chat: 'Bonjour',
-    time: '13:47',
-  },
-  {
-    id: 4,
-    name: 'User 4',
-    chat: 'Namaste',
-    time: '16:07',
-  },
-  {
-    id: 5,
-    name: 'User 5',
-    chat: 'Ni Hao',
-    time: '18:56',
-  },
-  {
-    id: 6,
-    name: 'User 2',
-    chat: 'Hi',
-    time: '11:35',
-  },
-  {
-    id: 7,
-    name: 'User 3',
-    chat: 'Bonjour',
-    time: '13:47',
-  },
-  {
-    id: 8,
-    name: 'User 4',
-    chat: 'Namaste',
-    time: '16:07',
-  },
-  {
-    id: 9,
-    name: 'User 5',
-    chat: 'Ni Hao',
-    time: '18:56',
-  },
-  {
-    id: 10,
-    name: 'User 5',
-    chat: 'Ni Hao',
-    time: '18:56',
-  },
-];
+import {Bubbles} from 'react-native-loader';
 
 class Home extends Component {
   constructor(props) {
@@ -88,6 +26,7 @@ class Home extends Component {
     userList: [],
     refreshing: false,
     uid: '',
+    isLoading: false,
   };
 
   componentDidMount = async () => {
@@ -108,6 +47,13 @@ class Home extends Component {
   };
 
   render(props) {
+    const {isLoading} = this.state;
+    setTimeout(
+      function() {
+        this.setState({isLoading: true});
+      }.bind(this),
+      2000,
+    );
     return (
       <>
         <StatusBar barStyle="light-content" backgroundColor="#075E54" />
@@ -125,49 +71,55 @@ class Home extends Component {
               </Item>
             </View>
           </LinearGradient>
-          <View style={styles.body}>
-            <FlatList
-              data={this.state.userList}
-              renderItem={({item}) => (
-                <View style={styles.listChat}>
-                  <Content>
-                    <List>
-                      <ListItem avatar>
-                        <Left>
-                          <TouchableOpacity
-                            onPress={() =>
-                              this.props.navigation.navigate('UserProfile', {
-                                item,
-                              })
-                            }>
-                            <Image
-                              source={{uri: item.photo}}
-                              style={styles.profilePic}
-                            />
-                          </TouchableOpacity>
-                        </Left>
-                        <Body>
-                          <TouchableOpacity
-                            onPress={() =>
-                              this.props.navigation.navigate('Chat', {item})
-                            }>
-                            <Text style={styles.personName}>
-                              {item.fullname}
-                            </Text>
-                            <Text note>{item.email}</Text>
-                          </TouchableOpacity>
-                        </Body>
-                        <Right>
-                          <Text note>{item.date}</Text>
-                        </Right>
-                      </ListItem>
-                    </List>
-                  </Content>
-                </View>
-              )}
-              keyExtractor={item => item.id}
-            />
-          </View>
+          {!isLoading ? (
+            <View style={styles.loader}>
+              <Bubbles size={10} style={styles.loadBuble} color="#128C7E" />
+            </View>
+          ) : (
+            <View style={styles.body}>
+              <FlatList
+                data={this.state.userList}
+                renderItem={({item}) => (
+                  <View style={styles.listChat}>
+                    <Content>
+                      <List>
+                        <ListItem avatar>
+                          <Left>
+                            <TouchableOpacity
+                              onPress={() =>
+                                this.props.navigation.navigate('UserProfile', {
+                                  item,
+                                })
+                              }>
+                              <Image
+                                source={{uri: item.photo}}
+                                style={styles.profilePic}
+                              />
+                            </TouchableOpacity>
+                          </Left>
+                          <Body>
+                            <TouchableOpacity
+                              onPress={() =>
+                                this.props.navigation.navigate('Chat', {item})
+                              }>
+                              <Text style={styles.personName}>
+                                {item.fullname}
+                              </Text>
+                              <Text note>{item.email}</Text>
+                            </TouchableOpacity>
+                          </Body>
+                          <Right>
+                            <Text note>{item.date}</Text>
+                          </Right>
+                        </ListItem>
+                      </List>
+                    </Content>
+                  </View>
+                )}
+                keyExtractor={item => item.id}
+              />
+            </View>
+          )}
         </View>
       </>
     );
@@ -222,6 +174,11 @@ const styles = StyleSheet.create({
   },
   personChat: {
     color: '#1f1f1f',
+  },
+  loader: {
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginTop: 300,
   },
 });
 

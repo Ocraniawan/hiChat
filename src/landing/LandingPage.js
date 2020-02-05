@@ -1,5 +1,12 @@
 import React, {Component} from 'react';
-import {Text, View, StyleSheet, Image, TouchableHighlight} from 'react-native';
+import {
+  Text,
+  View,
+  StyleSheet,
+  Image,
+  TouchableHighlight,
+  StatusBar,
+} from 'react-native';
 
 const styles = StyleSheet.create({
   root: {
@@ -39,24 +46,30 @@ const styles = StyleSheet.create({
 export default class LandingPage extends Component {
   render() {
     return (
-      <View style={styles.root}>
-        <View style={styles.top}>
-          <Image source={require('../assets/login.png')} style={styles.image} />
-          <View style={styles.form}>
-            <TouchableHighlight
-              style={[styles.buttonContainer, styles.loginButton]}
-              onPress={() => this.props.navigation.navigate('Login')}>
-              <Text style={styles.loginText}>Login</Text>
-            </TouchableHighlight>
+      <>
+        <StatusBar barStyle="light-content" backgroundColor="#075E54" />
+        <View style={styles.root}>
+          <View style={styles.top}>
+            <Image
+              source={require('../assets/login.png')}
+              style={styles.image}
+            />
+            <View style={styles.form}>
+              <TouchableHighlight
+                style={[styles.buttonContainer, styles.loginButton]}
+                onPress={() => this.props.navigation.navigate('Login')}>
+                <Text style={styles.loginText}>Login</Text>
+              </TouchableHighlight>
 
-            <TouchableHighlight
-              style={[styles.buttonContainer, styles.registerButton]}
-              onPress={() => this.props.navigation.navigate('Register')}>
-              <Text style={styles.loginText}>Register</Text>
-            </TouchableHighlight>
+              <TouchableHighlight
+                style={[styles.buttonContainer, styles.registerButton]}
+                onPress={() => this.props.navigation.navigate('Register')}>
+                <Text style={styles.loginText}>Register</Text>
+              </TouchableHighlight>
+            </View>
           </View>
         </View>
-      </View>
+      </>
     );
   }
 }
