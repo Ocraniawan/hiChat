@@ -116,7 +116,8 @@ const ProfileNav = createStackNavigator(
 
 ProfileNav.navigationOptions = ({navigation}) => {
   let tabBarVisible = true;
-  if (navigation.state.index > 0) {
+  let routeName = navigation.state.routes[navigation.state.index].routeName;
+  if (routeName === 'editProfile') {
     tabBarVisible = false;
   }
 
