@@ -306,6 +306,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     marginLeft: 10,
+    width: 50,
   },
   body: {
     flexDirection: 'row',

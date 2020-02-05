@@ -12,7 +12,6 @@ import {Header, Left, Body, Title, Item, Label, Input} from 'native-base';
 import Icons from 'react-native-vector-icons/Ionicons';
 import firebase from 'react-native-firebase';
 import {Bubbles} from 'react-native-loader';
-import LinearGradient from 'react-native-linear-gradient';
 
 export default class editProfile extends Component {
   constructor(props) {
@@ -71,7 +70,7 @@ export default class editProfile extends Component {
                   Alert.alert('Success!', 'Your data changed!', [
                     {
                       text: 'OK',
-                      onPress: () => this.props.navigation.navigate('Profile'),
+                      onPress: () => this.props.navigation.push('Profile'),
                     },
                   ]),
               },
@@ -206,6 +205,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     marginLeft: 10,
+    width: 50,
   },
   body: {
     flexDirection: 'row',

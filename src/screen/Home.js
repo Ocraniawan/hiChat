@@ -99,6 +99,11 @@ class Home extends Component {
                           </Left>
                           <Body>
                             <TouchableOpacity
+                              onLongPress={() =>
+                                this.props.navigation.navigate('UserProfile', {
+                                  item,
+                                })
+                              }
                               onPress={() =>
                                 this.props.navigation.navigate('Chat', {item})
                               }>
@@ -109,7 +114,7 @@ class Home extends Component {
                             </TouchableOpacity>
                           </Body>
                           <Right>
-                            <Text note>{item.date}</Text>
+                            <Text note badge={item.status === 'Online'} />
                           </Right>
                         </ListItem>
                       </List>
