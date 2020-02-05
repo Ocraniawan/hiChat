@@ -6,74 +6,14 @@ import {
   FlatList,
   TouchableOpacity,
   Image,
+  StatusBar,
 } from 'react-native';
 import {Content, List, ListItem, Left, Body, Right, Item} from 'native-base';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import AsyncStorage from '@react-native-community/async-storage';
 import firebase from 'react-native-firebase';
-
-const contact = [
-  {
-    id: 1,
-    name: 'Babe',
-    chat: 'Hello, Wake Up Baby',
-    time: '05:40',
-  },
-  {
-    id: 2,
-    name: 'Tommy',
-    chat: 'Hi',
-    time: '11:35',
-  },
-  {
-    id: 3,
-    name: 'James',
-    chat: 'Bonjour',
-    time: '13:47',
-  },
-  {
-    id: 4,
-    name: 'User 4',
-    chat: 'Namaste',
-    time: '16:07',
-  },
-  {
-    id: 5,
-    name: 'User 5',
-    chat: 'Ni Hao',
-    time: '18:56',
-  },
-  {
-    id: 6,
-    name: 'User 2',
-    chat: 'Hi',
-    time: '11:35',
-  },
-  {
-    id: 7,
-    name: 'User 3',
-    chat: 'Bonjour',
-    time: '13:47',
-  },
-  {
-    id: 8,
-    name: 'User 4',
-    chat: 'Namaste',
-    time: '16:07',
-  },
-  {
-    id: 9,
-    name: 'User 5',
-    chat: 'Ni Hao',
-    time: '18:56',
-  },
-  {
-    id: 10,
-    name: 'User 5',
-    chat: 'Ni Hao',
-    time: '18:56',
-  },
-];
+import LinearGradient from 'react-native-linear-gradient';
+import {Bubbles} from 'react-native-loader';
 
 class Home extends Component {
   constructor(props) {
@@ -86,6 +26,7 @@ class Home extends Component {
     userList: [],
     refreshing: false,
     uid: '',
+    isLoading: false,
   };
 
   componentDidMount = async () => {
@@ -106,63 +47,79 @@ class Home extends Component {
   };
 
   render(props) {
+    const {isLoading} = this.state;
+    setTimeout(
+      function() {
+        this.setState({isLoading: true});
+      }.bind(this),
+      2000,
+    );
     return (
       <>
+        <StatusBar barStyle="light-content" backgroundColor="#075E54" />
         <View style={styles.root}>
-          <View style={styles.header}>
-            <Item style={styles.itemHeader}>
-              <Left>
-                <Text style={styles.textHeader}>Message</Text>
-              </Left>
-              <Right>
-                {/* <Input placeholder="Search" style={styles.searchHeader} /> */}
-                <Icon name="search" size={20} />
-              </Right>
-            </Item>
-          </View>
-          <View style={styles.body}>
-            <FlatList
-              data={this.state.userList}
-              renderItem={({item}) => (
-                <View style={styles.listChat}>
-                  <Content>
-                    <List>
-                      <ListItem avatar>
-                        <Left>
-                          <TouchableOpacity
-                            onPress={() =>
-                              this.props.navigation.navigate('UserProfile', {
-                                item,
-                              })
-                            }>
-                            <Image
-                              source={{uri: item.photo}}
-                              style={styles.profilePic}
-                            />
-                          </TouchableOpacity>
-                        </Left>
-                        <Body>
-                          <TouchableOpacity
-                            onPress={() =>
-                              this.props.navigation.navigate('Chat', {item})
-                            }>
-                            <Text style={styles.personName}>
-                              {item.fullname}
-                            </Text>
-                            <Text note>{item.email}</Text>
-                          </TouchableOpacity>
-                        </Body>
-                        <Right>
-                          <Text note>{item.date}</Text>
-                        </Right>
-                      </ListItem>
-                    </List>
-                  </Content>
-                </View>
-              )}
-              keyExtractor={item => item.id}
-            />
-          </View>
+          <LinearGradient colors={['#128C7E', '#148E7F']} style={styles.header}>
+            <View style={styles.header}>
+              <Item style={styles.itemHeader}>
+                <Left>
+                  <Text style={styles.textHeader}>Message</Text>
+                </Left>
+                <Right>
+                  {/* <Input placeholder="Search" style={styles.searchHeader} /> */}
+                  <Icon name="search" size={20} color="white" />
+                </Right>
+              </Item>
+            </View>
+          </LinearGradient>
+          {!isLoading ? (
+            <View style={styles.loader}>
+              <Bubbles size={10} style={styles.loadBuble} color="#128C7E" />
+            </View>
+          ) : (
+            <View style={styles.body}>
+              <FlatList
+                data={this.state.userList}
+                renderItem={({item}) => (
+                  <View style={styles.listChat}>
+                    <Content>
+                      <List>
+                        <ListItem avatar>
+                          <Left>
+                            <TouchableOpacity
+                              onPress={() =>
+                                this.props.navigation.navigate('UserProfile', {
+                                  item,
+                                })
+                              }>
+                              <Image
+                                source={{uri: item.photo}}
+                                style={styles.profilePic}
+                              />
+                            </TouchableOpacity>
+                          </Left>
+                          <Body>
+                            <TouchableOpacity
+                              onPress={() =>
+                                this.props.navigation.navigate('Chat', {item})
+                              }>
+                              <Text style={styles.personName}>
+                                {item.fullname}
+                              </Text>
+                              <Text note>{item.email}</Text>
+                            </TouchableOpacity>
+                          </Body>
+                          <Right>
+                            <Text note>{item.date}</Text>
+                          </Right>
+                        </ListItem>
+                      </List>
+                    </Content>
+                  </View>
+                )}
+                keyExtractor={item => item.id}
+              />
+            </View>
+          )}
         </View>
       </>
     );
@@ -172,12 +129,12 @@ class Home extends Component {
 const styles = StyleSheet.create({
   root: {
     flex: 1,
-    backgroundColor: '#FBF5E5',
+    backgroundColor: 'white',
   },
   header: {
     alignItems: 'center',
     justifyContent: 'space-between',
-    backgroundColor: '#FBF5E5',
+    // backgroundColor: '#128C7E',
     elevation: 10,
   },
   itemHeader: {
@@ -185,11 +142,12 @@ const styles = StyleSheet.create({
     padding: 20,
   },
   searchHeader: {
-    color: 'black',
+    color: 'white',
     width: 150,
   },
   textHeader: {
     fontSize: 18,
+    color: 'white',
     fontWeight: 'bold',
     textAlign: 'left',
   },
@@ -216,6 +174,11 @@ const styles = StyleSheet.create({
   },
   personChat: {
     color: '#1f1f1f',
+  },
+  loader: {
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginTop: 300,
   },
 });
 

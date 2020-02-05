@@ -8,11 +8,13 @@ import {
   PermissionsAndroid,
   ToastAndroid,
   Platform,
+  StatusBar,
 } from 'react-native';
 import {Input, Form, Item} from 'native-base';
 import firebase from 'react-native-firebase';
 import AsyncStorage from '@react-native-community/async-storage';
 import Geolocation from 'react-native-geolocation-service';
+import {TouchableOpacity} from 'react-native-gesture-handler';
 
 const styles = StyleSheet.create({
   root: {
@@ -77,13 +79,14 @@ const styles = StyleSheet.create({
   facebookButton: {
     backgroundColor: '#456CB0',
   },
-  or: {
-    fontSize: 14,
-    fontWeight: 'bold',
-    alignSelf: 'center',
-    marginBottom: 10,
-    color: '#FBF5E5',
+  wrapsignup: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    paddingTop: 20,
+    marginBottom: 30,
   },
+  textsignup: {color: '#FBF5E5'},
 });
 
 export default class Login extends Component {
@@ -232,6 +235,7 @@ export default class Login extends Component {
   render() {
     return (
       <>
+        <StatusBar barStyle="light-content" backgroundColor="#075E54" />
         <View style={styles.root}>
           <View style={styles.top}>
             <Image
@@ -265,13 +269,13 @@ export default class Login extends Component {
                 onPress={this.loginPress}>
                 <Text style={styles.loginText}>LOGIN</Text>
               </TouchableHighlight>
-              <Text style={styles.or}>OR</Text>
-
-              <TouchableHighlight
-                style={[styles.buttonContainer, styles.facebookButton]}
-                onPress={() => this.props.navigation.navigate('Register')}>
-                <Text style={styles.loginText}>Facebook Login</Text>
-              </TouchableHighlight>
+              <View style={styles.wrapsignup}>
+                <Text>Don't have an account? </Text>
+                <TouchableHighlight
+                  onPress={() => this.props.navigation.navigate('Register')}>
+                  <Text style={styles.textsignup}> Sign up!</Text>
+                </TouchableHighlight>
+              </View>
             </Form>
           </View>
         </View>

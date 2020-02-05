@@ -1,5 +1,11 @@
 import React, {Component} from 'react';
-import {View, TouchableOpacity, Image, StyleSheet} from 'react-native';
+import {
+  View,
+  TouchableOpacity,
+  Image,
+  StyleSheet,
+  StatusBar,
+} from 'react-native';
 import {Header, Left, Body, Title, Right} from 'native-base';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import Icons from 'react-native-vector-icons/Ionicons';
@@ -63,8 +69,8 @@ export default class Chat extends Component {
 
   componentDidMount = async () => {
     const userId = await AsyncStorage.getItem('userid');
-    const userName = await AsyncStorage.getItem('user.name');
-    const userAvatar = await AsyncStorage.getItem('user.photo');
+    const userName = await AsyncStorage.getItem('users.name');
+    const userAvatar = await AsyncStorage.getItem('users.photo');
     this.setState({userId, userName, userAvatar});
     firebase
       .database()
@@ -86,9 +92,15 @@ export default class Chat extends Component {
           right: {
             backgroundColor: '#3BB0BA',
           },
+          left: {
+            backgroundColor: '#66757F',
+          },
         }}
         textStyle={{
           right: {
+            color: 'white',
+          },
+          left: {
             color: 'white',
           },
         }}
@@ -109,6 +121,7 @@ export default class Chat extends Component {
   render() {
     return (
       <>
+        <StatusBar barStyle="light-content" backgroundColor="#075E54" />
         <View style={styles.root}>
           <Header style={styles.header}>
             <Left>
@@ -122,21 +135,14 @@ export default class Chat extends Component {
               </TouchableOpacity>
             </Left>
             <Body style={styles.body}>
-              <TouchableOpacity
-                onPress={() =>
-                  this.props.navigation.push('UserProfile', {
-                    id: this.props.id,
-                  })
-                }>
-                <Image
-                  source={
-                    this.state.person.photo
-                      ? {uri: this.state.person.photo}
-                      : require('../../assets/Logo.png')
-                  }
-                  style={styles.profilePic}
-                />
-              </TouchableOpacity>
+              <Image
+                source={
+                  this.state.person.photo
+                    ? {uri: this.state.person.photo}
+                    : require('../../assets/Logo.png')
+                }
+                style={styles.profilePic}
+              />
               <Title style={styles.title}>{this.state.person.fullname}</Title>
             </Body>
             <Right style={styles.right}>
@@ -153,6 +159,7 @@ export default class Chat extends Component {
           </Header>
           <View style={styles.chatForm}>
             <GiftedChat
+              alwaysShowSend={true}
               renderSend={this.renderSend}
               renderBubble={this.renderBubble}
               text={this.state.message}
@@ -177,7 +184,7 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   header: {
-    backgroundColor: '#3BB0BA',
+    backgroundColor: '#128C7E',
     height: 55,
     justifyContent: 'space-between',
   },

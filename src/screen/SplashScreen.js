@@ -1,5 +1,5 @@
 import React, {useEffect} from 'react';
-import {View, ImageBackground, StyleSheet} from 'react-native';
+import {View, ImageBackground, StyleSheet, StatusBar} from 'react-native';
 import LinearGradient from 'react-native-linear-gradient';
 import firebase from 'react-native-firebase';
 const {currentUser} = firebase.auth();
@@ -29,14 +29,17 @@ const SplashScreen = props => {
   }, [props.navigation]);
 
   return (
-    <View style={styles.root}>
-      <LinearGradient colors={['#3BB0BA', '#FBF5E5']} style={styles.home}>
-        <ImageBackground
-          source={require('../assets/splash.png')}
-          style={styles.img}
-        />
-      </LinearGradient>
-    </View>
+    <>
+      <StatusBar barStyle="light-content" backgroundColor="#075E54" />
+      <View style={styles.root}>
+        <LinearGradient colors={['#3BB0BA', '#FBF5E5']} style={styles.home}>
+          <ImageBackground
+            source={require('../assets/splash.png')}
+            style={styles.img}
+          />
+        </LinearGradient>
+      </View>
+    </>
   );
 };
 

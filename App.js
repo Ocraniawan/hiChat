@@ -102,8 +102,8 @@ const ProfileNav = createStackNavigator(
         headerShown: false,
       },
     },
-    editPhoto: {
-      screen: EditPhoto,
+    editProfile: {
+      screen: EditProfile,
       navigationOptions: {
         headerShown: false,
       },
@@ -157,13 +157,13 @@ const BottomNav = createBottomTabNavigator(
   {
     initialRouteName: 'Home',
     tabBarOptions: {
-      activeTintColor: '#FBF5E5',
-      inactiveTintColor: '#C7CACD',
+      activeTintColor: '#313133',
+      inactiveTintColor: '#7A7A7A',
       style: {
-        backgroundColor: '#3BB0BA',
+        backgroundColor: '#F7F7F7',
         borderTopColor: 'transparent',
-        // borderTopRightRadius: 15,
-        // borderTopLeftRadius: 15,
+        borderTopRightRadius: 15,
+        borderTopLeftRadius: 15,
         height: 50,
       },
     },
