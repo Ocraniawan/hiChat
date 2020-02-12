@@ -1,13 +1,12 @@
 <h1 align='center'> HiChat </h1>
-<p align='justify'>Hi Chat is a mobile realtime chat application which used to send messages between users. This application is equipped with a map feature to find out the location of other users. Hi Chat built with React Native and Firebase.</p>
 
 ## Introduction
+<p align='justify'>Hi Chat is a mobile realtime chat application which used to send messages between users. This application is equipped with a map feature to find out the location of other users. Hi Chat built with React Native and Firebase.</p>
 
 [![React Native](https://img.shields.io/badge/React%20Native-v0.61.5-brightgreen)](https://facebook.github.io/react-native/)
 [![Firebase](https://img.shields.io/badge/React%20Native%20Firebase-v5.6.0-orange)](https://rnfirebase.io/docs/v5.x.x/getting-started)
 [![Firebase](https://img.shields.io/badge/React%20Native%20Maps-0.26.1-blue.svg?style=rounded-square)](https://github.com/react-native-community/react-native-maps)
 [![React Native](https://img.shields.io/badge/React%20Native%20Gifted%20Chat-v0.13.0-blueviolet)](https://www.npmjs.com/package/react-native-gifted-chat)
-
 
 ## Requirements
 
